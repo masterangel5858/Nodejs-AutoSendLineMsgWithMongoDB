@@ -11,3 +11,4 @@ cron.schedule('*/1 * * * *', () => {
     GetResult();
 });
 }
+schedule();
