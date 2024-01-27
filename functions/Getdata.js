@@ -114,7 +114,7 @@ async function GetResult() {
     results.forEach((result,index) => {
       const { time,LineID,matchedTime,scheduledTime} = result;
       const message = `${scheduledTime} อย่าลืมกินยาน้า นี้มันช่วง ${matchedTime} แล้ว\nรักษาสุขภาพนะ`
-      sendapi(message,'U33cd6913cb1d26a21f1f83b1a3bd7638');
+      sendapi(message,LineID);
       console.log(time);
       console.log(LineID);
       console.log(matchedTime);
