@@ -3,7 +3,7 @@ const { MongoClient } = require("mongodb");
 const url = "mongodb+srv://admin:1234@healthcaredemo.nlwfzbm.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
 const dbName = "HealthCare";
-const {sendapi} = require('./sendapi.js')
+const {sendapi , sendcarousel } = require('./sendapi.js')
 
 async function getAllDocuments() {
   let allDocuments = [];
@@ -114,6 +114,7 @@ async function GetResult() {
     results.forEach((result,index) => {
       const { time,LineID,matchedTime,scheduledTime} = result;
       const message = `${scheduledTime} อย่าลืมกินยาน้า นี้มันช่วง ${matchedTime} แล้ว\nรักษาสุขภาพนะ`
+      sendcarousel(LineID,matchedTime,)
       sendapi(message,LineID);
       console.log(time);
       console.log(LineID);
@@ -126,66 +127,4 @@ async function GetResult() {
   }
   
 }
-
-
-// // Usage example
-// async function alldata() {
-//   try {
-//     const documents = await getAllDocuments();
-//     console.log("All Documents:\n", documents);
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }
-
-// async function findLineID() {
-//     const documents = await getAllDocuments();
-//     console.log("All Documents:\n", documents);
-
-//     const LineID = documents.map(data => data.LineID);
-//     console.log("Line Ids:\n", LineID);
-// }
-
-// //horizontal data
-// async function test() {
-//     const documents = await getAllDocuments();
-//     const LineID = documents.map(data => data.LineID)
-//     const Morning = documents.map(data => data.Morning)
-//     const Noon = documents.map(data => data.Noon)
-//     const Evening = documents.map(data => data.Evening)
-    
-//     console.log("Line Ids:\n", LineID);
-//     console.log("Morning:\n",Morning);
-//     console.log("Noon:\n",Noon);
-//     console.log("Evening:\n",Evening);
-// }
-
-
-
-// test();
-// run();
-
-// async function runtest() {
-//     try {
-//       const allDocuments = await getAllDocuments();
-      
-//       // Extract Noon values
-//       const noonValues = allDocuments.map(document => document.Noon);
-//       console.log("Noon Values:", noonValues);
-  
-//       // Extract Evening values
-//       const eveningValues = allDocuments.map(document => document.Evening);
-//       console.log("Evening Values:", eveningValues);
-  
-//       // You can use the extracted values as needed in your application logic
-      
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   }
-  
-  
-
-
-
 

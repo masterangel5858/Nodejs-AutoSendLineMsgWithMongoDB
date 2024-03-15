@@ -1,16 +1,112 @@
 const axios = require('axios');
-// const LineID = 'U33cd6913cb1d26a21f1f83b1a3bd7638';
-// const message = 'อย่าลืมกินยาน้าาาาาาาาาาาาา' 
-// const {getAllDocuments,processDocuments} = require('./Getdata')
+const { fetchMedData } = require('./getmeddata');
 
-// async function some() {
-//   try {
-//     const results = await processDocuments();
-//     console.log("Results", results);
-//   }catch(err){
-//     console.error(err);
-//   }
-// }
+/**
+ * Send API to Line Notification with a carousel template
+ * @param {string} LineID - Line user ID
+ * @param {string} time - Time of the day (Morning, Noon, Evening)
+ */
+async function sendCarousel(LineID, time) {
+  try {
+    // Fetch medicine data asynchronously
+    const Meddata = await fetchMedData(LineID);
+    let summarycolumns =
+    {
+      "thumbnailImageUrl": 'https://i.ytimg.com/vi/HZZ4Ah4S3i4/maxresdefault.jpg',
+      "imageBackgroundColor": "#FFFFFF",
+      "title": time,
+      "text": 'กดเพื่อยอมรับทั้งหมด',
+      "defaultAction": {
+        "type": "uri",
+        "label": "AcceptAll",
+        "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/accept`
+      },
+      "actions": [
+        {
+          "type": "uri",
+          "label": "AcceptAll",
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/accept`
+        },
+        {
+          "type": "uri",
+          "label": "SnoozeAll",
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/snooze`
+        }
+      ]
+    }
+    // Process medicine data
+    let columns = Meddata.map((Medicine) => ({
+      "thumbnailImageUrl": Medicine.MedicPicture,
+      "imageBackgroundColor": "#FFFFFF",
+      "title": Medicine.MedicName,
+      "text": Medicine.afbf,
+      "defaultAction": {
+        "type": "uri",
+        "label": "Accept",
+        "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/accept`
+      },
+      "actions": [
+        {
+          "type": "uri",
+          "label": "Accept",
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/accept`
+        },
+        {
+          "type": "uri",
+          "label": "Snooze",
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/snooze`
+        }
+      ]
+    }));
+
+    let dataC = {
+      "to": LineID,
+      "messages": [
+        {
+          "type": "template",
+          "altText": "This is a carousel template",
+          "template": {
+            "type": "carousel",
+            "columns": [summarycolumns].concat(columns),
+            "imageAspectRatio": "rectangle",
+            "imageSize": "cover"
+          }
+        }
+      ]
+    };
+
+    // Now you can use this data to send the API request to Line Notification
+    console.log(JSON.stringify(dataC)); // Just for testing
+
+    let configC = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://api.line.me/v2/bot/message/push',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': 'Bearer N4jUMig3X5sk7cvppqoQJLWds+vXdZ8EfLAq6Nv2u/qNGu8bfnNep+D/EcAv17UNZDKPKhRFU6U4xyFKuwgtfitTTbbEif0tsqBkA+iZoBNtEPbKlhfQoPWt6viW058N7QtonTiiBpCUXc/XQhtTfgdB04t89/1O/w1cDnyilFU='
+      },
+      data : dataC
+    };
+
+    // Send the API request to Line Notification
+    const response = await axios.request(configC);
+    console.log(JSON.stringify(response.data));
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Send Api to LineNotification
@@ -27,6 +123,9 @@ let data = JSON.stringify({
     }
   ]
 });
+
+
+
 
 let config = {
   method: 'post',
@@ -48,5 +147,10 @@ axios.request(config)
 });
 }
 
-module.exports = { sendapi };
+module.exports = { sendapi,
+  sendCarousel };
 // sendapi('อย่าลืมกินยาน้าาาาาาาาาาาาา','U33cd6913cb1d26a21f1f83b1a3bd7638');
+
+
+// Example usage:
+sendCarousel("U33cd6913cb1d26a21f1f83b1a3bd7638", "Morning");
