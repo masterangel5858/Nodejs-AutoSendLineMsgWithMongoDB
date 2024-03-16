@@ -3,7 +3,7 @@ const { MongoClient } = require("mongodb");
 const url = "mongodb+srv://admin:1234@healthcaredemo.nlwfzbm.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(url);
 const dbName = "HealthCare";
-const {sendapi , sendcarousel } = require('./sendapi.js')
+const {sendapi , sendCarousel } = require('./sendapi.js')
 
 async function getAllDocuments() {
   let allDocuments = [];
@@ -114,7 +114,7 @@ async function GetResult() {
     results.forEach((result,index) => {
       const { time,LineID,matchedTime,scheduledTime} = result;
       const message = `${scheduledTime} อย่าลืมกินยาน้า นี้มันช่วง ${matchedTime} แล้ว\nรักษาสุขภาพนะ`
-      sendcarousel(LineID,matchedTime,)
+      sendCarousel(LineID,matchedTime,)
       sendapi(message,LineID);
       console.log(time);
       console.log(LineID);

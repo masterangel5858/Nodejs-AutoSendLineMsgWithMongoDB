@@ -25,12 +25,12 @@ async function sendCarousel(LineID, time) {
         {
           "type": "uri",
           "label": "AcceptAll",
-          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/accept`
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${Medicine.MedicName}/accept`
         },
         {
           "type": "uri",
           "label": "SnoozeAll",
-          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/snooze`
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${Medicine.MedicName}/snooze`
         }
       ]
     }
@@ -64,7 +64,7 @@ async function sendCarousel(LineID, time) {
       "messages": [
         {
           "type": "template",
-          "altText": "This is a carousel template",
+          "altText": "อย่าลืมรับประทานยา",
           "template": {
             "type": "carousel",
             "columns": [summarycolumns].concat(columns),
@@ -153,4 +153,4 @@ module.exports = { sendapi,
 
 
 // Example usage:
-sendCarousel("U33cd6913cb1d26a21f1f83b1a3bd7638", "Morning");
+//sendCarousel("U33cd6913cb1d26a21f1f83b1a3bd7638", "Morning");
