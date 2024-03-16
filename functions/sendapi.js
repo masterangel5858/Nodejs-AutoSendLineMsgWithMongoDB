@@ -19,18 +19,18 @@ async function sendCarousel(LineID, time) {
       "defaultAction": {
         "type": "uri",
         "label": "AcceptAll",
-        "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/accept`
+        "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/acceptall/${LineID}/${time}`
       },
       "actions": [
         {
           "type": "uri",
           "label": "AcceptAll",
-          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${Medicine.MedicName}/accept`
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/acceptall/${LineID}/${time}`
         },
         {
           "type": "uri",
           "label": "SnoozeAll",
-          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${Medicine.MedicName}/snooze`
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/snoozeall/${LineID}/${time}`
         }
       ]
     }
@@ -43,18 +43,18 @@ async function sendCarousel(LineID, time) {
       "defaultAction": {
         "type": "uri",
         "label": "Accept",
-        "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/accept`
+        "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/accept/${LineID}/${Medicine.MedicName}`
       },
       "actions": [
         {
           "type": "uri",
           "label": "Accept",
-          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/accept`
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/accept/${LineID}/${Medicine.MedicName}`
         },
         {
           "type": "uri",
           "label": "Snooze",
-          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/${LineID}/${time}/snooze`
+          "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/snooze/${LineID}/${Medicine.MedicName}`
         }
       ]
     }));
@@ -64,7 +64,7 @@ async function sendCarousel(LineID, time) {
       "messages": [
         {
           "type": "template",
-          "altText": "อย่าลืมรับประทานยา",
+          "altText": "อย่าลืมรับประทานยาน้า",
           "template": {
             "type": "carousel",
             "columns": [summarycolumns].concat(columns),
@@ -123,9 +123,6 @@ let data = JSON.stringify({
     }
   ]
 });
-
-
-
 
 let config = {
   method: 'post',
