@@ -64,7 +64,7 @@ async function sendCarousel(LineID, time) {
       "messages": [
         {
           "type": "template",
-          "altText": "อย่าลืมรับประทานยาน้า",
+          "altText": "ถึงเวลาทานยาแล้ว !!!",
           "template": {
             "type": "carousel",
             "columns": [summarycolumns].concat(columns),
