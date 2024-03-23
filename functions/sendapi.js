@@ -92,108 +92,134 @@ async function sendCarousel(LineID, time) {
       };
 
     // Process medicine data
-    const Meddata = await fetchMedDatatime(LineID,time);
-    let columns = Meddata.map((Medicine) => ({
-      "type": "bubble",
-      "size": "hecto",
-      "hero": {
-        "type": "image",
-        "url": Medicine.MedicPicture,
-        "size": "full",
-        "aspectMode": "cover",
-        "aspectRatio": "320:213"
-      },
-      "body": {
-        "type": "box",
-        "layout": "vertical",
-        "contents": [
-          {
-            "type": "text",
-            "text": `${Medicine.MedicName}`,
-            "weight": "bold",
-            "size": "md",
-            "wrap": true,
-            "align": "center"
-          },
-          {
-            "type": "separator",
-            "margin": "sm"
-          },
-          {
+    const Meddata = await fetchMedDatatime(LineID, time);
+let columns = Meddata.map((Medicine) => {
+    // Initialize the time variables
+    let timeText = '';
+    if (Medicine.afbf === 'Before') {
+        timeText += 'ก่อนอาหาร';
+    } else if (Medicine.afbf === 'After') {
+        timeText += 'หลังอาหาร';
+    }
+
+    // Add morning, noon, and evening labels based on the medicine data
+    let scheduleText = '';
+    if (Medicine.Morning) {
+        scheduleText += 'เช้า';
+    }
+    if (Medicine.Noon) {
+        if (scheduleText) scheduleText += ', ';
+        scheduleText += 'กลางวัน';
+    }
+    if (Medicine.Evening) {
+        if (scheduleText) scheduleText += ', ';
+        scheduleText += 'เย็น';
+    }
+
+    return {
+        "type": "bubble",
+        "size": "hecto",
+        "hero": {
+            "type": "image",
+            "url": Medicine.MedicPicture,
+            "size": "full",
+            "aspectMode": "cover",
+            "aspectRatio": "320:213"
+        },
+        "body": {
             "type": "box",
-            "layout": "horizontal",
+            "layout": "vertical",
             "contents": [
-              {
-                "type": "text",
-                "text": "จำนวนยาคงเหลือ",
-                "size": "xs",
-                "margin": "xs",
-                "flex": 2
-              },
-              {
-                "type": "text",
-                "text": `${Medicine.stock}`,
-                "size": "xs",
-                "margin": "xs"
-              }
-            ]
-          },
-          {
-            "type": "box",
-            "layout": "horizontal",
-            "contents": [
-              {
-                "type": "text",
-                "text": "เวลากินยา :",
-                "margin": "xs",
-                "size": "xs",
-                "flex": 1
-              },
-              {
-                "type": "text",
-                "text": `${Medicine.afbf}`,
-                "size": "xs",
-                "margin": "xs"
-              }
-            ]
-          },
-          {
-            "type": "box",
-            "layout": "horizontal",
-            "contents": [
-              {
-                "type": "text",
-                "text": "ช่วงเวลากินยา",
-                "size": "xs",
-                "margin": "xs"
-              },
-              {
-                "type": "text",
-                "text": "เช้า,กลางวัน,เย็น",
-                "size": "xs",
-                "margin": "xs"
-              }
-            ]
-          },
-          {
-            "type": "separator",
-            "margin": "sm"
-          },
-          {
-            "type": "button",
-            "action": {
-              "type": "uri",
-              "label": "ยอมรับ",
-              "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/accept/${LineID}/${Medicine.MedicName}`
-            },
-            "margin": "xs",
-            "height": "sm",
-            "style": "primary"
-          }
-        ],
-        "paddingAll": "13px",
-      }
-    }));
+                {
+                    "type": "text",
+                    "text": `${Medicine.MedicName}`,
+                    "weight": "bold",
+                    "size": "md",
+                    "wrap": true,
+                    "align": "center"
+                },
+                {
+                    "type": "separator",
+                    "margin": "sm"
+                },
+                {
+                    "type": "box",
+                    "layout": "horizontal",
+                    "contents": [
+                        {
+                            "type": "text",
+                            "text": "จำนวนยาคงเหลือ",
+                            "size": "xs",
+                            "margin": "xs",
+                            "flex": 2
+                        },
+                        {
+                            "type": "text",
+                            "text": `${Medicine.stock}`,
+                            "size": "xs",
+                            "margin": "xs"
+                        }
+                    ]
+                },
+                {
+                    "type": "box",
+                    "layout": "horizontal",
+                    "contents": [
+                        {
+                            "type": "text",
+                            "text": "เวลากินยา :",
+                            "margin": "xs",
+                            "size": "xs",
+                            "flex": 1
+                        },
+                        {
+                            "type": "text",
+                            "text": `${timeText}`,
+                            "size": "xs",
+                            "margin": "xs"
+                        }
+                    ]
+                },
+                {
+                    "type": "box",
+                    "layout": "horizontal",
+                    "contents": [
+                        {
+                            "type": "text",
+                            "text": "ช่วงเวลากินยา",
+                            "size": "xs",
+                            "margin": "xs"
+                        },
+                        {
+                            "type": "text",
+                            "text": `${scheduleText}`,
+                            "size": "xs",
+                            "margin": "xs"
+                        }
+                    ]
+                },
+                {
+                    "type": "separator",
+                    "margin": "sm"
+                },
+                {
+                    "type": "button",
+                    "action": {
+                        "type": "uri",
+                        "label": "ยอมรับ",
+                        "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/accept/${LineID}/${Medicine.MedicName}`
+                    },
+                    "margin": "xs",
+                    "height": "sm",
+                    "style": "primary"
+                }
+            ],
+            "paddingAll": "13px",
+        }
+    };
+});
+
+
 
     let dataC = {
       "to": LineID,
