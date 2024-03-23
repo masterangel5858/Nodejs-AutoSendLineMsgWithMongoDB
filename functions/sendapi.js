@@ -109,7 +109,7 @@ async function sendCarousel(LineID, time) {
         "contents": [
           {
             "type": "text",
-            "text": Medicine.MedicName,
+            "text": `${Medicine.MedicName}`,
             "weight": "bold",
             "size": "md",
             "wrap": true,
@@ -151,7 +151,7 @@ async function sendCarousel(LineID, time) {
               },
               {
                 "type": "text",
-                "text": Medicine.afbf,
+                "text": `${Medicine.afbf}`,
                 "size": "xs",
                 "margin": "xs"
               }
