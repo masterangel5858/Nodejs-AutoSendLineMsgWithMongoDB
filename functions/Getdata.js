@@ -113,8 +113,8 @@ async function GetResult() {
     console.log("Schedule Results:\n", results);
     results.forEach((result,index) => {
       const { time,LineID,matchedTime,scheduledTime} = result;
-      // const message = `${scheduledTime} อย่าลืมกินยาน้า นี้มันช่วง ${matchedTime} แล้ว\nรักษาสุขภาพนะ`
-      sendCarousel(LineID,matchedTime,)
+      const message = `${scheduledTime} อย่าลืมกินยาน้า นี้มันช่วง ${matchedTime} แล้ว\nรักษาสุขภาพนะ`
+      sendCarousel(LineID,matchedTime)
       sendapi(message,LineID);
       console.log(time);
       console.log(LineID);

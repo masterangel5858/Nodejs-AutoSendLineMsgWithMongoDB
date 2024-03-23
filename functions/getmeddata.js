@@ -24,6 +24,46 @@ async function getMeddata(LineID) {
   }
 }
 
+
+async function getMeddatabytime(LineID,time) {
+  try {
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `https://medexpressbackend.netlify.app/.netlify/functions/api/getdatamed/${LineID}/${time}`,
+      headers: {}
+    };
+
+    const response = await axios.request(config);
+    const data = response.data;
+
+    // Accessing the properties of the data object
+    const userId = data.LineID;
+    const medicines = data.Medicine;
+
+    return medicines;
+
+  } catch (error) {
+    console.error('Error:', error);
+    throw error; // Re-throw the error to handle it outside the function
+  }
+}
+
+
+
+async function fetchMedDatatime(LineID,time) {
+  try {
+    const medicines = await getMeddatabytime(LineID,time);
+    return medicines; // Return the fetched data
+  } catch (error) {
+    console.error('Error:', error);
+    throw error; // Re-throw the error to handle it outside the function
+  }
+}
+
+
+
+
 async function fetchMedData(LineID) {
   try {
     const medicines = await getMeddata(LineID);
@@ -34,17 +74,17 @@ async function fetchMedData(LineID) {
   }
 }
 
+
+
+
 module.exports = {
     fetchMedData,
-    getMeddata
+    getMeddata,
+    fetchMedDatatime,
+    getMeddatabytime
 }
 
-const LineID = 'U33cd6913cb1d26a21f1f83b1a3bd7638'
-// Call the function to fetch data and log it
-fetchMedData(LineID)
-  .then((medicines) => {
-    console.log(medicines); // Log the fetched data
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+
+
+
+
