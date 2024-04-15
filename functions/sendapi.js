@@ -2,6 +2,15 @@ const axios = require('axios');
 const { fetchMedData,fetchMedDatatime } = require('./getmeddata');
 const { fetchuserData} = require('./getuserdata')
 
+
+/**
+ * Get current timestamp
+ * @returns {number} Current timestamp in milliseconds
+ */
+function getCurrentTimestamp() {
+  return new Date().getTime();
+}
+
 /**
  * Send API to Line Notification with a carousel template
  * @param {string} LineID - Line user ID
@@ -13,6 +22,11 @@ async function sendCarousel(LineID, time) {
     const userdata = await fetchuserData(LineID);
     // Check if userdata is not null or undefined
     if (userdata) {
+      const timestamp = getCurrentTimestamp(); // Get current timestamp
+      const acceptallUrl = `https://medexpressbackend.netlify.app/.netlify/functions/api/acceptall/${LineID}/${time}/${timestamp}`;
+      const snoozeallUrl = `https://medexpressbackend.netlify.app/.netlify/functions/api/snoozeall/${LineID}/${time}/${timestamp}`;
+      const userDetailsUrl = 'https://liff.line.me/2003049267-Ory1R5Kd';
+
       const acceptall = {
         "type": "bubble",
         "size": "hecto",
@@ -50,7 +64,7 @@ async function sendCarousel(LineID, time) {
                   "action": {
                     "type": "uri",
                     "label": "ยอมรับทั้งหมด",
-                    "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/acceptall/${LineID}/${time}`
+                    "uri": acceptallUrl
                   },
                   "margin": "xs",
                   "height": "sm",
@@ -61,7 +75,7 @@ async function sendCarousel(LineID, time) {
                   "action": {
                     "type": "uri",
                     "label": "เลื่อนเวลาเตือน",
-                    "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/snoozeall/${LineID}/${time}`
+                    "uri": snoozeallUrl
                   },
                   "margin": "xs",
                   "height": "sm",
@@ -79,7 +93,7 @@ async function sendCarousel(LineID, time) {
               "action": {
                 "type": "uri",
                 "label": "รายละเอียดสมาชิก",
-                "uri": "https://liff.line.me/2003049267-Ory1R5Kd"
+                "uri": userDetailsUrl
               },
               "margin": "xs",
               "height": "sm",
@@ -207,7 +221,7 @@ let columns = Meddata.map((Medicine) => {
                     "action": {
                         "type": "uri",
                         "label": "ยอมรับ",
-                        "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/accept/${LineID}/${Medicine.MedicName}`
+                        "uri": `https://medexpressbackend.netlify.app/.netlify/functions/api/accept/${LineID}/${Medicine.MedicName}/${timestamp}`
                     },
                     "margin": "xs",
                     "height": "sm",
