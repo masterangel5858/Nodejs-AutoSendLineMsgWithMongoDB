@@ -5,7 +5,7 @@ async function getMeddata(LineID) {
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `https://medexpressbackend.netlify.app/.netlify/functions/api/getdatamed/${LineID}`,
+      url: `https://back-end-express-mwkv.onrender.com/getdatamed/${LineID}`,
       headers: {}
     };
 
@@ -30,7 +30,7 @@ async function getMeddatabytime(LineID,time) {
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `https://medexpressbackend.netlify.app/.netlify/functions/api/getdatamed/${LineID}/${time}`,
+      url: `https://back-end-express-mwkv.onrender.com/getdatamed/${LineID}/${time}`,
       headers: {}
     };
 

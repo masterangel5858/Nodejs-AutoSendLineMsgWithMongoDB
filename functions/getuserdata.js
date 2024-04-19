@@ -5,7 +5,7 @@ async function getuserdata(LineID) {
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
-      url: `https://medexpressbackend.netlify.app/.netlify/functions/api/getdatauser/${LineID}`,
+      url: `https://back-end-express-mwkv.onrender.com/getdatauser/${LineID}`,
       headers: {}
     };
 
