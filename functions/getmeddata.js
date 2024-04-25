@@ -50,6 +50,24 @@ async function getMeddatabytime(LineID,time) {
 }
 
 
+async function getmeddatabytimeanddate(LineID, time, date) {
+  try {
+    const config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `https://back-end-express-mwkv.onrender.com/getdatamed/${LineID}/${time}/${date}`,
+      headers: {}
+    };
+
+    const response = await axios.request(config);
+    return response.data.Medicine;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+}
+
+
 
 async function fetchMedDatatime(LineID,time) {
   try {
@@ -61,7 +79,15 @@ async function fetchMedDatatime(LineID,time) {
   }
 }
 
-
+async function fetchMedDatatimeanddate(LineID,time,date) {
+  try {
+    const medicines = await getmeddatabytimeanddate(LineID,time,date);
+    return medicines; // Return the fetched data
+  } catch (error) {
+    console.error('Error:', error);
+    throw error; // Re-throw the error to handle it outside the function
+  }
+}
 
 
 async function fetchMedData(LineID) {
@@ -77,11 +103,14 @@ async function fetchMedData(LineID) {
 
 
 
+
+
 module.exports = {
     fetchMedData,
     getMeddata,
     fetchMedDatatime,
-    getMeddatabytime
+    getMeddatabytime,
+    fetchMedDatatimeanddate
 }
 
 

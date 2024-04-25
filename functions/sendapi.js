@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { fetchMedData,fetchMedDatatime } = require('./getmeddata');
+const { fetchMedData,fetchMedDatatime,fetchMedDatatimeanddate } = require('./getmeddata');
 const { fetchuserData} = require('./getuserdata')
 
 
@@ -16,7 +16,7 @@ function getCurrentTimestamp() {
  * @param {string} LineID - Line user ID
  * @param {string} time - Time of the day (Morning, Noon, Evening)
  */
-async function sendCarousel(LineID, time,timestamp) {
+async function sendCarousel(LineID, time,timestamp,day) {
   try {
     // Fetch user data asynchronously
     const userdata = await fetchuserData(LineID);
@@ -105,7 +105,7 @@ async function sendCarousel(LineID, time,timestamp) {
       };
 
     // Process medicine data
-    const Meddata = await fetchMedDatatime(LineID, time);
+    const Meddata = await fetchMedDatatimeanddate(LineID, time,day);
 let columns = Meddata.map((Medicine) => {
     // Initialize the time variables
     let timeText = '';
@@ -128,108 +128,158 @@ let columns = Meddata.map((Medicine) => {
         if (scheduleText) scheduleText += ', ';
         scheduleText += 'เย็น';
     }
+ // Initialize the day variables
+ let scheduledate = '';
 
-    return {
-        "type": "bubble",
-        "size": "hecto",
-        "hero": {
-            "type": "image",
-            "url": Medicine.MedicPicture,
-            "size": "full",
-            "aspectMode": "cover",
-            "aspectRatio": "320:213"
-        },
-        "body": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-                {
-                    "type": "text",
-                    "text": `${Medicine.MedicName}`,
-                    "weight": "bold",
-                    "size": "md",
-                    "wrap": true,
-                    "align": "center"
-                },
-                {
-                    "type": "separator",
-                    "margin": "sm"
-                },
-                {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": "จำนวนยาคงเหลือ",
-                            "size": "xs",
-                            "margin": "xs",
-                            "flex": 2
-                        },
-                        {
-                            "type": "text",
-                            "text": `${Medicine.stock}`,
-                            "size": "xs",
-                            "margin": "xs"
-                        }
-                    ]
-                },
-                {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": "เวลากินยา :",
-                            "margin": "xs",
-                            "size": "xs",
-                            "flex": 1
-                        },
-                        {
-                            "type": "text",
-                            "text": `${timeText}`,
-                            "size": "xs",
-                            "margin": "xs"
-                        }
-                    ]
-                },
-                {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": "ช่วงเวลากินยา",
-                            "size": "xs",
-                            "margin": "xs"
-                        },
-                        {
-                            "type": "text",
-                            "text": `${scheduleText}`,
-                            "size": "xs",
-                            "margin": "xs"
-                        }
-                    ]
-                },
-                {
-                    "type": "separator",
-                    "margin": "sm"
-                },
-                {
-                    "type": "button",
-                    "action": {
-                        "type": "uri",
-                        "label": "ยอมรับ",
-                        "uri": `https://back-end-express-mwkv.onrender.com/accept/${LineID}/${Medicine.MedicID}/${timestamp}`
-                    },
-                    "margin": "xs",
-                    "height": "sm",
-                    "style": "primary"
-                }
-            ],
-            "paddingAll": "13px",
-        }
-    };
+ // Check and add day labels based on the medicine schedule
+ const MedicineDate = Medicine.MedicDate;
+ if (MedicineDate.Monday) {
+     if (scheduledate) scheduledate += ', ';
+     scheduledate += 'จ';
+ }
+ if (MedicineDate.Tuesday) {
+     if (scheduledate) scheduledate += ', ';
+     scheduledate += 'อ';
+ }
+ if (MedicineDate.Wednesday) {
+     if (scheduledate) scheduledate += ', ';
+     scheduledate += 'พ';
+ }
+ if (MedicineDate.Thursday) {
+     if (scheduledate) scheduledate += ', ';
+     scheduledate += 'พฤ';
+ }
+ if (MedicineDate.Friday) {
+     if (scheduledate) scheduledate += ', ';
+     scheduledate += 'ศ';
+ }
+ if (MedicineDate.Saturday) {
+     if (scheduledate) scheduledate += ', ';
+     scheduledate += 'ส';
+ }
+ if (MedicineDate.Sunday) {
+     if (scheduledate) scheduledate += ', ';
+     scheduledate += 'อา';
+ }
+ return {
+  "type": "bubble",
+  "size": "hecto",
+  "hero": {
+      "type": "image",
+      "url": Medicine.MedicPicture,
+      "size": "full",
+      "aspectMode": "cover",
+      "aspectRatio": "320:213"
+  },
+  "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+          {
+              "type": "text",
+              "text": `${Medicine.MedicName}`,
+              "weight": "bold",
+              "size": "md",
+              "wrap": true,
+              "align": "center"
+          },
+          {
+              "type": "separator",
+              "margin": "sm"
+          },
+          {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                  {
+                      "type": "text",
+                      "text": "จำนวนยาคงเหลือ",
+                      "size": "xs",
+                      "margin": "xs",
+                      "flex": 2
+                  },
+                  {
+                      "type": "text",
+                      "text": `${Medicine.stock}`,
+                      "size": "xs",
+                      "margin": "xs"
+                  }
+              ]
+          },
+          {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                  {
+                      "type": "text",
+                      "text": "เวลากินยา :",
+                      "margin": "xs",
+                      "size": "xs",
+                      "flex": 1
+                  },
+                  {
+                      "type": "text",
+                      "text": `${timeText}`,
+                      "size": "xs",
+                      "margin": "xs"
+                  }
+              ]
+          },
+          {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                  {
+                      "type": "text",
+                      "text": "ช่วงเวลากินยา",
+                      "size": "xs",
+                      "margin": "xs"
+                  },
+                  {
+                      "type": "text",
+                      "text": `${scheduleText}`,
+                      "size": "xs",
+                      "margin": "xs"
+                  }
+              ]
+          },
+          {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                  {
+                      "type": "text",
+                      "text": "วันที่กินยา",
+                      "size": "xs",
+                      "margin": "xs"
+                  },
+                  {
+                      "type": "text",
+                      "text": `${scheduledate}`,
+                      "size": "xs",
+                      "margin": "xs"
+                  }
+              ]
+          },
+          {
+              "type": "separator",
+              "margin": "sm"
+          },
+          {
+              "type": "button",
+              "action": {
+                  "type": "uri",
+                  "label": "ยอมรับ",
+                  "uri": `https://back-end-express-mwkv.onrender.com/accept/${LineID}/${Medicine.MedicID}/${timestamp}`
+              },
+              "margin": "xs",
+              "height": "sm",
+              "style": "primary"
+          }
+      ],
+      "paddingAll": "13px",
+  }
+};
 });
 
 
@@ -277,7 +327,7 @@ console.error('Error:', error);
  * @param {string} LineID - Line user ID
  * @param {string} time - Time of the day (Morning, Noon, Evening)
  */
-async function sendCarouseltohost(HostLineID,LineID,time, timestamp) {
+async function sendCarouseltohost(HostLineID,LineID,time, timestamp,day) {
   try {
     // Fetch user data asynchronously
     const userdata = await fetchuserData(LineID);
@@ -366,7 +416,7 @@ async function sendCarouseltohost(HostLineID,LineID,time, timestamp) {
       };
 
     // Process medicine data
-    const Meddata = await fetchMedDatatime(LineID, time);
+    const Meddata = await fetchMedDatatimeanddate(LineID, time,day);
 let columns = Meddata.map((Medicine) => {
     // Initialize the time variables
     let timeText = '';
@@ -390,107 +440,158 @@ let columns = Meddata.map((Medicine) => {
         scheduleText += 'เย็น';
     }
 
-    return {
-        "type": "bubble",
-        "size": "hecto",
-        "hero": {
-            "type": "image",
-            "url": Medicine.MedicPicture,
-            "size": "full",
-            "aspectMode": "cover",
-            "aspectRatio": "320:213"
-        },
-        "body": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-                {
-                    "type": "text",
-                    "text": `${Medicine.MedicName}`,
-                    "weight": "bold",
-                    "size": "md",
-                    "wrap": true,
-                    "align": "center"
-                },
-                {
-                    "type": "separator",
-                    "margin": "sm"
-                },
-                {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": "จำนวนยาคงเหลือ",
-                            "size": "xs",
-                            "margin": "xs",
-                            "flex": 2
-                        },
-                        {
-                            "type": "text",
-                            "text": `${Medicine.stock}`,
-                            "size": "xs",
-                            "margin": "xs"
-                        }
-                    ]
-                },
-                {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": "เวลากินยา :",
-                            "margin": "xs",
-                            "size": "xs",
-                            "flex": 1
-                        },
-                        {
-                            "type": "text",
-                            "text": `${timeText}`,
-                            "size": "xs",
-                            "margin": "xs"
-                        }
-                    ]
-                },
-                {
-                    "type": "box",
-                    "layout": "horizontal",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": "ช่วงเวลากินยา",
-                            "size": "xs",
-                            "margin": "xs"
-                        },
-                        {
-                            "type": "text",
-                            "text": `${scheduleText}`,
-                            "size": "xs",
-                            "margin": "xs"
-                        }
-                    ]
-                },
-                {
-                    "type": "separator",
-                    "margin": "sm"
-                },
-                {
-                    "type": "button",
-                    "action": {
-                        "type": "uri",
-                        "label": "ยอมรับ",
-                        "uri": `https://back-end-express-mwkv.onrender.com/accept/${LineID}/${Medicine.MedicID}/${timestamp}`
-                    },
-                    "margin": "xs",
-                    "height": "sm",
-                    "style": "primary"
-                }
-            ],
-            "paddingAll": "13px",
-        }
-    };
+     // Initialize the day variables
+     let scheduledate = '';
+
+     // Check and add day labels based on the medicine schedule
+     const MedicineDate = Medicine.MedicDate;
+     if (MedicineDate.Monday) {
+         if (scheduledate) scheduledate += ', ';
+         scheduledate += 'จ';
+     }
+     if (MedicineDate.Tuesday) {
+         if (scheduledate) scheduledate += ', ';
+         scheduledate += 'อ';
+     }
+     if (MedicineDate.Wednesday) {
+         if (scheduledate) scheduledate += ', ';
+         scheduledate += 'พ';
+     }
+     if (MedicineDate.Thursday) {
+         if (scheduledate) scheduledate += ', ';
+         scheduledate += 'พฤ';
+     }
+     if (MedicineDate.Friday) {
+         if (scheduledate) scheduledate += ', ';
+         scheduledate += 'ศ';
+     }
+     if (MedicineDate.Saturday) {
+         if (scheduledate) scheduledate += ', ';
+         scheduledate += 'ส';
+     }
+     if (MedicineDate.Sunday) {
+         if (scheduledate) scheduledate += ', ';
+         scheduledate += 'อา';
+     }
+     return {
+      "type": "bubble",
+      "size": "hecto",
+      "hero": {
+          "type": "image",
+          "url": Medicine.MedicPicture,
+          "size": "full",
+          "aspectMode": "cover",
+          "aspectRatio": "320:213"
+      },
+      "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+              {
+                  "type": "text",
+                  "text": `${Medicine.MedicName}`,
+                  "weight": "bold",
+                  "size": "md",
+                  "wrap": true,
+                  "align": "center"
+              },
+              {
+                  "type": "separator",
+                  "margin": "sm"
+              },
+              {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                      {
+                          "type": "text",
+                          "text": "จำนวนยาคงเหลือ",
+                          "size": "xs",
+                          "margin": "xs",
+                          "flex": 2
+                      },
+                      {
+                          "type": "text",
+                          "text": `${Medicine.stock}`,
+                          "size": "xs",
+                          "margin": "xs"
+                      }
+                  ]
+              },
+              {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                      {
+                          "type": "text",
+                          "text": "เวลากินยา :",
+                          "margin": "xs",
+                          "size": "xs",
+                          "flex": 1
+                      },
+                      {
+                          "type": "text",
+                          "text": `${timeText}`,
+                          "size": "xs",
+                          "margin": "xs"
+                      }
+                  ]
+              },
+              {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                      {
+                          "type": "text",
+                          "text": "ช่วงเวลากินยา",
+                          "size": "xs",
+                          "margin": "xs"
+                      },
+                      {
+                          "type": "text",
+                          "text": `${scheduleText}`,
+                          "size": "xs",
+                          "margin": "xs"
+                      }
+                  ]
+              },
+              {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                      {
+                          "type": "text",
+                          "text": "วันที่กินยา",
+                          "size": "xs",
+                          "margin": "xs"
+                      },
+                      {
+                          "type": "text",
+                          "text": `${scheduledate}`,
+                          "size": "xs",
+                          "margin": "xs"
+                      }
+                  ]
+              },
+              {
+                  "type": "separator",
+                  "margin": "sm"
+              },
+              {
+                  "type": "button",
+                  "action": {
+                      "type": "uri",
+                      "label": "ยอมรับ",
+                      "uri": `https://back-end-express-mwkv.onrender.com/accept/${LineID}/${Medicine.MedicID}/${timestamp}`
+                  },
+                  "margin": "xs",
+                  "height": "sm",
+                  "style": "primary"
+              }
+          ],
+          "paddingAll": "13px",
+      }
+  };
 });
 
 

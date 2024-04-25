@@ -5,6 +5,9 @@ const client = new MongoClient(url);
 const dbName = "HealthCare";
 const {sendapi , sendCarousel ,sendCarouseltohost} = require('./sendapi.js')
 const {fetchmanageuser,getmanageuser} = require('./getmanageuser.js')
+const moment = require('moment');
+const { fetchMedDatatime } = require("./getmeddata.js");
+const {fetchMedDatabydate} =require('./getmeddatabydate.js');
 
 async function getAllDocuments() {
   let allDocuments = [];
@@ -115,43 +118,53 @@ function getCurrentTimestamp() {
 
 async function GetResult() {
   try {
+    const currentDate = moment().format('dddd'); // Get the current date in a readable format
+    console.log("Current Date:", currentDate);
+
     const results = await processDocuments();
     console.log("Schedule Results:\n", results);
 
-     // Get the timestamp once at the beginning
-     const timestamp = getCurrentTimestamp();
+    // Get the timestamp once at the beginning
+    const timestamp = getCurrentTimestamp();
 
     for (const result of results) {
-      const { LineID, matchedTime, scheduledTime } = result;
-      const message = `${scheduledTime} อย่าลืมกินยาน้า นี้มันช่วง ${matchedTime} แล้ว\nรักษาสุขภาพนะ`;
-      const messagemember = 'สมาชิกของคุณถึงเวลาทานยาแล้วหละ';
-
-      const membership = await fetchmanageuser(LineID);
-      console.log("Membership:", membership);
-      
-      if (membership && membership.length > 0) {
-        for (const userGroup of membership) {
-          if (userGroup.User && userGroup.User.includes(LineID)) {
-            console.log("Sending message to Host:", userGroup.LineID,matchedTime); // Corrected LineID
-            await sendapi(messagemember, userGroup.LineID); 
-            await sendCarouseltohost(userGroup.LineID,LineID, matchedTime,timestamp); 
-          }
-        }
+      const medData = await fetchMedDatabydate(result.LineID, currentDate,result.matchedTime); // Fetch medicine data for the current date
+      if (medData.length === 0) {
+        console.log("No data found for the specified date.");
+        // Handle the case where no data is found
       } else {
-        console.log("No membership data found for LineID:", LineID);
-      }
+        console.log("Data found:", medData);
+        // Process the data as needed
 
-      // Example calls to your sending functions outside the loop
-      console.log("sending to member",LineID , matchedTime)
-      await sendapi(message, LineID);
-      await sendCarousel(LineID, matchedTime,timestamp);
-      
+        const { LineID, matchedTime, scheduledTime } = result;
+        const message = `${scheduledTime} อย่าลืมกินยาน้า นี้มันช่วง ${matchedTime} แล้ว\nรักษาสุขภาพนะ`;
+        const messagemember = 'สมาชิกของคุณถึงเวลาทานยาแล้วหละ';
+
+        const membership = await fetchmanageuser(LineID);
+        console.log("Membership:", membership);
+
+        if (membership && membership.length > 0) {
+          for (const userGroup of membership) {
+            if (userGroup.User && userGroup.User.includes(LineID)) {
+              console.log("Sending message to Host:", userGroup.LineID, matchedTime,currentDate); // Corrected LineID
+              await sendapi(messagemember, userGroup.LineID);
+              await sendCarouseltohost(userGroup.LineID, LineID, matchedTime, timestamp,currentDate);
+            }
+          }
+        } else {
+          console.log("No membership data found for LineID:", LineID);
+        }
+
+        // Example calls to your sending functions outside the loop
+        console.log("sending to member", LineID, matchedTime)
+        await sendapi(message, LineID);
+        await sendCarousel(LineID, matchedTime, timestamp,currentDate);
+      }
     }
   } catch (err) {
     console.error(err);
   }
 }
-
 
 
 
