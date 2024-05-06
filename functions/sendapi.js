@@ -1,6 +1,6 @@
 const axios = require('axios');
 const { fetchMedData,fetchMedDatatime,fetchMedDatatimeanddate } = require('./getmeddata');
-const { fetchuserData} = require('./getuserdata')
+
 
 
 /**
@@ -13,17 +13,20 @@ function getCurrentTimestamp() {
 
 /**
  * Send API to Line Notification with a carousel template
- * @param {string} LineID - Line user ID
+ * @param {string} userdata - userdata that contain LineID,Username,Picture
  * @param {string} time - Time of the day (Morning, Noon, Evening)
+ * @param {string} timestamp - getCurrentTimestamp();
+ * @param {string} Meddata - Medicine Data
  */
-async function sendCarousel(LineID, time,timestamp,day) {
+async function sendCarousel(userdata, time,timestamp,Meddata) {
   try {
-    // Fetch user data asynchronously
-    const userdata = await fetchuserData(LineID);
     // Check if userdata is not null or undefined
-    if (userdata) {
-      const acceptallUrl = `https://back-end-express-mwkv.onrender.com/acceptall/${LineID}/${time}/${timestamp}`;
-      const snoozeallUrl = `https://back-end-express-mwkv.onrender.com/snoozeall/${LineID}/${time}/${timestamp}`;
+    if (!userdata) {
+      throw new Error('User data not found.');
+    }
+      else {
+      const acceptallUrl = `https://back-end-express-mwkv.onrender.com/acceptall/${userdata.LineID}/${time}/${timestamp}`;
+      const snoozeallUrl = `https://back-end-express-mwkv.onrender.com/snoozeall/${userdata.LineID}/${time}/${timestamp}`;
       const userDetailsUrl = 'https://liff.line.me/2003049267-Ory1R5Kd';
 
       const acceptall = {
@@ -42,7 +45,7 @@ async function sendCarousel(LineID, time,timestamp,day) {
           "contents": [
             {
               "type": "text",
-              "text": `ME : ${userdata.Name}`,
+              "text": `ฉัน : ${userdata.Name}`,
               "weight": "bold",
               "size": "md",
               "wrap": true,
@@ -105,7 +108,9 @@ async function sendCarousel(LineID, time,timestamp,day) {
       };
 
     // Process medicine data
-    const Meddata = await fetchMedDatatimeanddate(LineID, time,day);
+    if (!Meddata) {
+      throw new Error('Medicine data not found.');
+    }
 let columns = Meddata.map((Medicine) => {
     // Initialize the time variables
     let timeText = '';
@@ -270,7 +275,7 @@ let columns = Meddata.map((Medicine) => {
               "action": {
                   "type": "uri",
                   "label": "ยอมรับ",
-                  "uri": `https://back-end-express-mwkv.onrender.com/accept/${LineID}/${Medicine.MedicID}/${timestamp}`
+                  "uri": `https://back-end-express-mwkv.onrender.com/accept/${userdata.LineID}/${Medicine.MedicID}/${timestamp}`
               },
               "margin": "xs",
               "height": "sm",
@@ -280,12 +285,11 @@ let columns = Meddata.map((Medicine) => {
       "paddingAll": "13px",
   }
 };
-});
-
+} );
 
 
     let dataC = {
-      "to": LineID,
+      "to": userdata.LineID,
       "messages": [
         {
           "type": "flex",
@@ -313,7 +317,14 @@ let columns = Meddata.map((Medicine) => {
 
  // Send the API request to Line Notification
  const response = await axios.request(configC);
- console.log(JSON.stringify(response.data));
+ if (response.status >= 200 && response.status < 300) {
+    console.log('Carousel to host sent successfully.');
+    console.log(JSON.stringify(response.data));
+    return true
+  } else {
+    console.error('Error sending carousel:', response.statusText);
+    // Handle the error or throw an exception as needed
+  }
 }
 } 
 catch (error) {
@@ -324,17 +335,20 @@ console.error('Error:', error);
 /**
  * Send API to Line Notification with a carousel template
  * @param {string} HostLineID - Line user ID
- * @param {string} LineID - Line user ID
+ * @param {string} userdata - Line user ID
  * @param {string} time - Time of the day (Morning, Noon, Evening)
+ * @param {string} timestamp - getCurrentTimestamp();
+ * @param {string} Meddata - Medicine Data
  */
-async function sendCarouseltohost(HostLineID,LineID,time, timestamp,day) {
+async function sendCarouseltohost(HostLineID,userdata,time,timestamp,Meddata) {
   try {
-    // Fetch user data asynchronously
-    const userdata = await fetchuserData(LineID);
     // Check if userdata is not null or undefined
-    if (userdata) {
-      const acceptallUrl = `https://back-end-express-mwkv.onrender.com/acceptall/${LineID}/${time}/${timestamp}`;
-      const snoozeallUrl = `https://back-end-express-mwkv.onrender.com/snoozeall/${LineID}/${time}/${timestamp}`;
+    if (!userdata) {
+      throw new Error('User data not found.');
+    }
+      else {
+      const acceptallUrl = `https://back-end-express-mwkv.onrender.com/acceptall/${userdata.LineID}/${time}/${timestamp}`;
+      const snoozeallUrl = `https://back-end-express-mwkv.onrender.com/snoozeall/${userdata.LineID}/${time}/${timestamp}`;
       const userDetailsUrl = 'https://liff.line.me/2003049267-Ory1R5Kd';
 
       const acceptall = {
@@ -353,7 +367,7 @@ async function sendCarouseltohost(HostLineID,LineID,time, timestamp,day) {
           "contents": [
             {
               "type": "text",
-              "text": `Member : ${userdata.Name}`,
+              "text": `สมาชิก : ${userdata.Name}`,
               "weight": "bold",
               "size": "md",
               "wrap": true,
@@ -416,7 +430,9 @@ async function sendCarouseltohost(HostLineID,LineID,time, timestamp,day) {
       };
 
     // Process medicine data
-    const Meddata = await fetchMedDatatimeanddate(LineID, time,day);
+    if (!Meddata) {
+      throw new Error('Medicine data not found.');
+    }
 let columns = Meddata.map((Medicine) => {
     // Initialize the time variables
     let timeText = '';
@@ -582,7 +598,7 @@ let columns = Meddata.map((Medicine) => {
                   "action": {
                       "type": "uri",
                       "label": "ยอมรับ",
-                      "uri": `https://back-end-express-mwkv.onrender.com/accept/${LineID}/${Medicine.MedicID}/${timestamp}`
+                      "uri": `https://back-end-express-mwkv.onrender.com/accept/${userdata.LineID}/${Medicine.MedicID}/${timestamp}`
                   },
                   "margin": "xs",
                   "height": "sm",
@@ -625,7 +641,15 @@ let columns = Meddata.map((Medicine) => {
 
  // Send the API request to Line Notification
  const response = await axios.request(configC);
- console.log(JSON.stringify(response.data));
+ if (response.status >= 200 && response.status < 300) {
+    console.log('Carousel to Members sent successfully.');
+    console.log(JSON.stringify(response.data));
+  return true
+} else {
+  console.error('Error sending carousel:', response.statusText);
+  // Handle the error or throw an exception as needed
+}
+ 
 }
 } 
 catch (error) {

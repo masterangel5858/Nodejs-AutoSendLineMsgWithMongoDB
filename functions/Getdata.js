@@ -8,6 +8,10 @@ const {fetchmanageuser,getmanageuser} = require('./getmanageuser.js')
 const moment = require('moment');
 const { fetchMedDatatime } = require("./getmeddata.js");
 const {fetchMedDatabydate} =require('./getmeddatabydate.js');
+const { fetchuserData} = require('./getuserdata');
+const { connectToDatabase, DisconnectToDatabase } = require("./connecteddatabase.js");
+const { insertData } = require("./insertMedicineLogs.js");
+const { getFormattedDate } = require("./setting.js");
 
 async function getAllDocuments() {
   let allDocuments = [];
@@ -118,8 +122,9 @@ function getCurrentTimestamp() {
 
 async function GetResult() {
   try {
-    const currentDate = moment().format('dddd'); // Get the current date in a readable format
-    console.log("Current Date:", currentDate);
+    let currentTimeString = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Bangkok' });
+    let currentDate = getFormattedDate();
+    const date = moment().format('dddd');
 
     const results = await processDocuments();
     console.log("Schedule Results:\n", results);
@@ -128,7 +133,7 @@ async function GetResult() {
     const timestamp = getCurrentTimestamp();
 
     for (const result of results) {
-      const medData = await fetchMedDatabydate(result.LineID, currentDate,result.matchedTime); // Fetch medicine data for the current date
+      const medData = await fetchMedDatabydate(result.LineID, date,result.matchedTime); // Fetch medicine data for the current date
       if (medData.length === 0) {
         console.log("No data found for the specified date.");
         // Handle the case where no data is found
@@ -137,18 +142,22 @@ async function GetResult() {
         // Process the data as needed
 
         const { LineID, matchedTime, scheduledTime } = result;
-        const message = `${scheduledTime} อย่าลืมกินยาน้า นี้มันช่วง ${matchedTime} แล้ว\nรักษาสุขภาพนะ`;
-        const messagemember = 'สมาชิกของคุณถึงเวลาทานยาแล้วหละ';
-
+        const message = `ถึงเวลาทานของคุณแล้ว !!! \nรักษาสุขภาพนะ`;
+        const messagemember = 'สมาชิกของคุณถึงเวลาทานยาแล้ว !!!';
+        const userdata = await fetchuserData(LineID);
+        if (!userdata) {
+          throw new Error('User data not found.');
+        }
+        
         const membership = await fetchmanageuser(LineID);
         console.log("Membership:", membership);
 
         if (membership && membership.length > 0) {
           for (const userGroup of membership) {
             if (userGroup.User && userGroup.User.includes(LineID)) {
-              console.log("Sending message to Host:", userGroup.LineID, matchedTime,currentDate); // Corrected LineID
+              console.log("Sending message to Host:", userGroup.LineID, matchedTime,currentDate); 
               await sendapi(messagemember, userGroup.LineID);
-              await sendCarouseltohost(userGroup.LineID, LineID, matchedTime, timestamp,currentDate);
+              await sendCarouseltohost(userGroup.LineID, userdata, matchedTime, timestamp,medData);
             }
           }
         } else {
@@ -158,7 +167,37 @@ async function GetResult() {
         // Example calls to your sending functions outside the loop
         console.log("sending to member", LineID, matchedTime)
         await sendapi(message, LineID);
-        await sendCarousel(LineID, matchedTime, timestamp,currentDate);
+        await sendCarousel(userdata, matchedTime, timestamp,medData);
+        if (sendCarousel){
+          try{
+            const mappedData = medData.map((medicine) => ({
+              LineID: userdata.LineID,
+              MedicID: medicine.MedicID,
+              MedicName: medicine.MedicName,
+              Morning: medicine.Morning,
+              Noon: medicine.Noon,
+              Evening: medicine.Evening,
+              afbf: medicine.afbf,
+              stock: medicine.stock,
+              MedicPicture: medicine.MedicPicture,
+              status: medicine.Status,
+              datestamp: currentDate,
+              timecreate:currentTimeString,
+              timestamp:null,
+              urltime:`${timestamp}`,
+              MatchedTime: matchedTime,
+              AcceptType:null,
+              AcceptStatus: false
+            }));
+            insertData(mappedData);
+          }
+          catch (err){
+            console.error(err);
+          } finally{
+            DisconnectToDatabase();
+          }
+          
+        }
       }
     }
   } catch (err) {
