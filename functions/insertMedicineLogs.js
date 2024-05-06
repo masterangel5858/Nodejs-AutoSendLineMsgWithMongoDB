@@ -6,7 +6,7 @@ async function insertData(data) {
         await connectToDatabase();
         console.log('try to insert data');
         const db = client.db(dbName);
-        const col = db.collection("MedicineLogs_UAT");
+        const col = db.collection("MedicineLogs");
 
         // Check if data is an array
         if (Array.isArray(data) && data.length > 1) {
