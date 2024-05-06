@@ -598,7 +598,7 @@ let columns = Meddata.map((Medicine) => {
                   "action": {
                       "type": "uri",
                       "label": "ยอมรับ",
-                      "uri": `https://back-end-express-mwkv.onrender.com/accept/${userdata.LineID}/${Medicine.MedicID}/${timestamp}`
+                      "uri": `https://back-end-express-mwkv.onrender.com/accept/${LineID}/${Medicine.MedicID}/${timestamp}`
                   },
                   "margin": "xs",
                   "height": "sm",
