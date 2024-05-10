@@ -310,7 +310,7 @@ let columns = Meddata.map((Medicine) => {
    url: 'https://api.line.me/v2/bot/message/push',
    headers: { 
      'Content-Type': 'application/json', 
-     'Authorization': 'Bearer N4jUMig3X5sk7cvppqoQJLWds+vXdZ8EfLAq6Nv2u/qNGu8bfnNep+D/EcAv17UNZDKPKhRFU6U4xyFKuwgtfitTTbbEif0tsqBkA+iZoBNtEPbKlhfQoPWt6viW058N7QtonTiiBpCUXc/XQhtTfgdB04t89/1O/w1cDnyilFU='
+     'Authorization': 'Bearer 2O4LkCT2vk8eo/NATER8HwxJAigRBqeIwodRaGkwZIb10XgEl+er3I3mUe3PTI64NhDKMB4E50J4Xab9Y1d/HTNMzvC08kIRnXMRQXyBUuWUrztL/vwmYU7KssdDWVpqUZCLHtjIHJQLV2jXl3x/iAdB04t89/1O/w1cDnyilFU='
    },
    data: dataC
  };
@@ -598,7 +598,7 @@ let columns = Meddata.map((Medicine) => {
                   "action": {
                       "type": "uri",
                       "label": "ยอมรับ",
-                      "uri": `https://back-end-express-mwkv.onrender.com/accept/${LineID}/${Medicine.MedicID}/${timestamp}`
+                      "uri": `https://back-end-express-mwkv.onrender.com/accept/${userdata.LineID}/${Medicine.MedicID}/${timestamp}`
                   },
                   "margin": "xs",
                   "height": "sm",
@@ -634,7 +634,7 @@ let columns = Meddata.map((Medicine) => {
    url: 'https://api.line.me/v2/bot/message/push',
    headers: { 
      'Content-Type': 'application/json', 
-     'Authorization': 'Bearer N4jUMig3X5sk7cvppqoQJLWds+vXdZ8EfLAq6Nv2u/qNGu8bfnNep+D/EcAv17UNZDKPKhRFU6U4xyFKuwgtfitTTbbEif0tsqBkA+iZoBNtEPbKlhfQoPWt6viW058N7QtonTiiBpCUXc/XQhtTfgdB04t89/1O/w1cDnyilFU='
+     'Authorization': 'Bearer 2O4LkCT2vk8eo/NATER8HwxJAigRBqeIwodRaGkwZIb10XgEl+er3I3mUe3PTI64NhDKMB4E50J4Xab9Y1d/HTNMzvC08kIRnXMRQXyBUuWUrztL/vwmYU7KssdDWVpqUZCLHtjIHJQLV2jXl3x/iAdB04t89/1O/w1cDnyilFU='
    },
    data: dataC
  };
@@ -690,7 +690,7 @@ let config = {
   url: 'https://api.line.me/v2/bot/message/push',
   headers: { 
     'Content-Type': 'application/json', 
-    'Authorization': 'Bearer N4jUMig3X5sk7cvppqoQJLWds+vXdZ8EfLAq6Nv2u/qNGu8bfnNep+D/EcAv17UNZDKPKhRFU6U4xyFKuwgtfitTTbbEif0tsqBkA+iZoBNtEPbKlhfQoPWt6viW058N7QtonTiiBpCUXc/XQhtTfgdB04t89/1O/w1cDnyilFU='
+    'Authorization': 'Bearer 2O4LkCT2vk8eo/NATER8HwxJAigRBqeIwodRaGkwZIb10XgEl+er3I3mUe3PTI64NhDKMB4E50J4Xab9Y1d/HTNMzvC08kIRnXMRQXyBUuWUrztL/vwmYU7KssdDWVpqUZCLHtjIHJQLV2jXl3x/iAdB04t89/1O/w1cDnyilFU='
   },
   data : data
 };
