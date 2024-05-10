@@ -156,7 +156,7 @@ async function GetResult() {
           for (const userGroup of membership) {
             if (userGroup.User && userGroup.User.includes(LineID)) {
               console.log("Sending message to Host:", userGroup.LineID, matchedTime,currentDate); 
-              await sendapi(messagemember, userGroup.LineID);
+              // await sendapi(messagemember, userGroup.LineID);
               await sendCarouseltohost(userGroup.LineID, userdata, matchedTime, timestamp,medData);
             }
           }
@@ -166,7 +166,7 @@ async function GetResult() {
 
         // Example calls to your sending functions outside the loop
         console.log("sending to member", LineID, matchedTime)
-        await sendapi(message, LineID);
+        // await sendapi(message, LineID);
         await sendCarousel(userdata, matchedTime, timestamp,medData);
         if (sendCarousel){
           try{
