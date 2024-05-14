@@ -133,6 +133,10 @@ let columns = Meddata.map((Medicine) => {
         if (scheduleText) scheduleText += ', ';
         scheduleText += 'เย็น';
     }
+    if (Medicine.Night) {
+      if (scheduleText) scheduleText += ', ';
+      scheduleText += 'ก่อนนอน';
+  }
  // Initialize the day variables
  let scheduledate = '';
 
@@ -454,6 +458,10 @@ let columns = Meddata.map((Medicine) => {
     if (Medicine.Evening) {
         if (scheduleText) scheduleText += ', ';
         scheduleText += 'เย็น';
+    }
+    if (Medicine.Night) {
+        if (scheduleText) scheduleText += ', ';
+        scheduleText += 'ก่อนนอน';
     }
 
      // Initialize the day variables
