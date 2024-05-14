@@ -86,14 +86,15 @@ async function processDocuments() {
         if (
           (currentHours === morningHours && currentMinutes === morningMinutes) ||
           (currentHours === noonHours && currentMinutes === noonMinutes) ||
-          (currentHours === eveningHours && currentMinutes === eveningMinutes)
+          (currentHours === eveningHours && currentMinutes === eveningMinutes) ||
+          (currentHours === nightHours && currentMinutes === nightMinutes)
         ) {
           let matchedTime;
           if (currentHours === morningHours && currentMinutes === morningMinutes) {
             matchedTime = "Morning";
           } else if (currentHours === noonHours && currentMinutes === noonMinutes) {
             matchedTime = "Noon";
-          } else if (currentHours === eveningHours && currentMinutes === noonMinutes) {
+          } else if (currentHours === eveningHours && currentMinutes === eveningMinutes) {
             matchedTime = "Evening";
           } else {
             matchedTime = "Night";
