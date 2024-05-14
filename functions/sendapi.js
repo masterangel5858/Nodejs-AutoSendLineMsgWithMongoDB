@@ -27,7 +27,7 @@ async function sendCarousel(userdata, time,timestamp,Meddata) {
       else {
       const acceptallUrl = `https://back-end-express-mwkv.onrender.com/acceptall/${userdata.LineID}/${time}/${timestamp}`;
       const snoozeallUrl = `https://back-end-express-mwkv.onrender.com/snoozeall/${userdata.LineID}/${time}/${timestamp}`;
-      const userDetailsUrl = 'https://liff.line.me/2003049267-Ory1R5Kd';
+      const userDetailsUrl = 'https://liff.line.me/2004903683-WnaAjA86';
 
       const acceptall = {
         "type": "bubble",
@@ -349,7 +349,7 @@ async function sendCarouseltohost(HostLineID,userdata,time,timestamp,Meddata) {
       else {
       const acceptallUrl = `https://back-end-express-mwkv.onrender.com/acceptall/${userdata.LineID}/${time}/${timestamp}`;
       const snoozeallUrl = `https://back-end-express-mwkv.onrender.com/snoozeall/${userdata.LineID}/${time}/${timestamp}`;
-      const userDetailsUrl = 'https://liff.line.me/2003049267-Ory1R5Kd';
+      const userDetailsUrl = 'https://liff.line.me/2004903683-WnaAjA86';
 
       const acceptall = {
         "type": "bubble",
