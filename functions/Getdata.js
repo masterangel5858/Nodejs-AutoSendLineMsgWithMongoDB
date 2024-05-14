@@ -21,14 +21,15 @@ async function getAllDocuments() {
     const col = db.collection("NotifyTime");
 
     await col.find().forEach(document => {
-      const { _id, LineID, Morning, Noon, Evening } = document;
+      const { _id, LineID, Morning, Noon, Evening ,Night } = document;
 
       allDocuments.push({
         _id,
         LineID,
         Morning: Morning.join(":"),
         Noon: Noon.join(":"),
-        Evening: Evening.join(":")
+        Evening: Evening.join(":"),
+        Night: Night.join(":")
       });
     });
 
@@ -58,7 +59,7 @@ async function processDocuments() {
 
     documents.forEach((document, index) => {
       try {
-        const { LineID, Morning, Noon, Evening } = document;
+        const { LineID, Morning, Noon, Evening, Night } = document;
 
         // Extract hours and minutes from currentTime
         const currentHours = currentTime.getHours();
@@ -74,9 +75,13 @@ async function processDocuments() {
         const eveningHours = Number(Evening.split(":")[0]);
         const eveningMinutes = Number(Evening.split(":")[1]);
 
+        const nightHours = Number(Night.split(":")[0]);
+        const nightMinutes = Number(Night.split(":")[1]);
+
         console.log("Morning Time:", morningHours, ":", morningMinutes);
         console.log("Noon Time:", noonHours, ":", noonMinutes);
         console.log("Evening Time:", eveningHours, ":", eveningMinutes);
+        console.log("Night Time:", nightHours, ":", nightMinutes);
 
         if (
           (currentHours === morningHours && currentMinutes === morningMinutes) ||
@@ -88,9 +93,12 @@ async function processDocuments() {
             matchedTime = "Morning";
           } else if (currentHours === noonHours && currentMinutes === noonMinutes) {
             matchedTime = "Noon";
-          } else {
+          } else if (currentHours === eveningHours && currentMinutes === noonMinutes) {
             matchedTime = "Evening";
+          } else {
+            matchedTime = "Night";
           }
+          
           results.push({
             time: "Matched",
             LineID,
@@ -177,6 +185,7 @@ async function GetResult() {
               Morning: medicine.Morning,
               Noon: medicine.Noon,
               Evening: medicine.Evening,
+              Night: medicine.Night,
               afbf: medicine.afbf,
               stock: medicine.stock,
               MedicPicture: medicine.MedicPicture,
