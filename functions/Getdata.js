@@ -21,15 +21,16 @@ async function getAllDocuments() {
     const col = db.collection("NotifyTime");
 
     await col.find().forEach(document => {
-      const { _id, LineID, Morning, Noon, Evening ,Night } = document;
+      const { _id, LineID, Morning, Noon, Evening, Night } = document;
 
+      // Type check before joining
       allDocuments.push({
         _id,
         LineID,
-        Morning: Morning.join(":"),
-        Noon: Noon.join(":"),
-        Evening: Evening.join(":"),
-        Night: Night.join(":")
+        Morning: Array.isArray(Morning) ? Morning.join(":") : Morning,
+        Noon: Array.isArray(Noon) ? Noon.join(":") : Noon,
+        Evening: Array.isArray(Evening) ? Evening.join(":") : Evening,
+        Night: Array.isArray(Night) ? Night.join(":") : Night
       });
     });
 
@@ -37,7 +38,6 @@ async function getAllDocuments() {
   } catch (err) {
     console.log(err.stack);
   } finally {
-    // Move the client.close() inside the finally block
     await client.close();
   }
 }
