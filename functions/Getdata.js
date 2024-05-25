@@ -199,6 +199,7 @@ async function GetResult() {
               AcceptType:null,
               AcceptStatus: false
             }));
+            console.log("Data before insert",mappedData);
             insertData(mappedData);
           }
           catch (err){
